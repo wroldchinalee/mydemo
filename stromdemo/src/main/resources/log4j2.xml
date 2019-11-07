@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <Properties>
+        <Property name="project-name">stormdemo</Property>
+        <!--指定日志输出的文件路径 -->
+        <Property name="log-path">logs/${project-name}</Property>
+    </Properties>
+    <Appenders>
+        <!--基于时间和size的FileAppender-->
+        <!--日志文件的上级目录名以项目名为准，日志文件的文件名无约束-->
+        <RollingFile name="RollingFile" fileName="${log-path}/logging.log"
+                     filePattern="${log-path}/$${date:yyyy-MM}/logging-%d{MM-dd-yyyy}-%i.log.gz" >
+            <!--注意日志输出格式规范， 如有特殊格式需求请联系日志云管理员配置logstash-->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [${hostName}] [${project-name}] [%-5level] [%t] %c{1} - %msg%n"/>
+            <Policies>
+                <!--当文件名不匹配filePattern时做一次Rotate-->
+                <TimeBasedTriggeringPolicy />
+                <!--当日志文件size大于50MB时做一次Rotate-->
+                <SizeBasedTriggeringPolicy size="50 MB" />
+            </Policies>
+            <!--最多保存100份gz文件，这里控制每天gz最大保留数目-->
+            <DefaultRolloverStrategy max="100"/>
+        </RollingFile>
+        <Console name="Console" target="SYSTEM_OUT"  ignoreExceptions="false">
+            <!--日志输出格式-->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [${hostName}] [${project-name}] [%-5level] [%t] %c{1} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="RollingFile" />
+            <AppenderRef ref="Console" /><!-- 生产请去掉console -->
+        </Root>
+    </Loggers>
+</configuration>
