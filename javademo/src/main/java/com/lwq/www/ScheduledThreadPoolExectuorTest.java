@@ -19,12 +19,19 @@ public class ScheduledThreadPoolExectuorTest {
         scheduledThreadPoolExecutor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                if (count > 2) {
-                    invokeA(null);
-                } else {
-                    invokeA(count + "");
+
+                try {
+                    if (count > 2 && count < 10) {
+                        invokeA(null);
+                    } else if (count < 2) {
+                        invokeA(count + "");
+                    } else {
+                        invokeA(count + "");
+                    }
+                    count = count + 1;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                count = count + 1;
             }
         }, 0, 5, TimeUnit.SECONDS);
     }
